@@ -62,6 +62,8 @@ func main() {
 		isFirstWire = false
 	}
 
+	check(scanner.Err())
+
 	fmt.Printf("Distance: %d\n", minDistance)
 }
 
