@@ -26,18 +26,18 @@ func main() {
 		memory[i] = toInt(opCode)
 	}
 
-	// partyOne(memory)
-	partyTwo(memory)
+	// partOne(memory)
+	partTwo(memory)
 }
 
-func partyOne(memory []int) {
+func partOne(memory []int) {
 	err := runIntcodePrg(memory, 12, 2)
 	check(err)
 
 	fmt.Printf("Result: %d", memory[0])
 }
 
-func partyTwo(initialMemory []int) {
+func partTwo(initialMemory []int) {
 
 	for noun := 0; noun <= 99; noun++ {
 		for verb := 0; verb <= 99; verb++ {

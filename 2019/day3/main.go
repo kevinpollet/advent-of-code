@@ -51,8 +51,8 @@ func main() {
 					}
 
 				} else {
-					//partyOne(steps, step, &minDistance)
-					partyTwo(steps, step, stepCount, &minDistance)
+					//partOne(steps, step, &minDistance)
+					partTwo(steps, step, stepCount, &minDistance)
 				}
 
 			}
@@ -69,7 +69,7 @@ func main() {
 
 type step struct{ x, y int }
 
-func partyOne(steps map[step]int, secondWireStep step, minDistance *int) {
+func partOne(steps map[step]int, secondWireStep step, minDistance *int) {
 	if _, exists := steps[secondWireStep]; exists {
 
 		distance := abs(-secondWireStep.x) + abs(-secondWireStep.y)
@@ -79,7 +79,7 @@ func partyOne(steps map[step]int, secondWireStep step, minDistance *int) {
 	}
 }
 
-func partyTwo(steps map[step]int, secondWireStep step, secondWireStepCount int, minDistance *int) {
+func partTwo(steps map[step]int, secondWireStep step, secondWireStepCount int, minDistance *int) {
 	if stepCount, exists := steps[secondWireStep]; exists {
 
 		distance := stepCount + secondWireStepCount
