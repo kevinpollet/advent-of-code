@@ -20,31 +20,38 @@ func main() {
 	check(err)
 
 	opCodes := strings.Split(string(bytes), ",")
-	initialMemory := make([]int, len(opCodes))
-	for i, strOpCode := range opCodes {
-		initialMemory[i], err = strconv.Atoi(strOpCode)
-		check(err)
+
+	memory := make([]int, len(opCodes))
+	for i, opCode := range opCodes {
+		memory[i] = toInt(opCode)
 	}
 
-	var memory []int
+	// partyOne(memory)
+	partyTwo(memory)
+}
+
+func partyOne(memory []int) {
+	err := runIntcodePrg(memory, 12, 2)
+	check(err)
+
+	fmt.Printf("Result: %d", memory[0])
+}
+
+func partyTwo(initialMemory []int) {
+
 	for noun := 0; noun <= 99; noun++ {
 		for verb := 0; verb <= 99; verb++ {
-			memory = append([]int{}, initialMemory...)
-			if err := runPrg(memory, noun, verb); err != nil {
-				break
-			}
-
+			memory := append([]int{}, initialMemory...) // reset memory
+			runIntcodePrg(memory, noun, verb)
 			if memory[0] == 19690720 {
-				fmt.Printf("(noun,verb)=(%d, %d)\n", memory[1], memory[2])
+				fmt.Printf("Result noun: %d, verb: %d\n", memory[1], memory[2])
 				return
 			}
 		}
 	}
-
-	fmt.Println("No result found")
 }
 
-func runPrg(memory []int, noun, verb int) error {
+func runIntcodePrg(memory []int, noun, verb int) error {
 	memory[1] = noun
 	memory[2] = verb
 
@@ -62,6 +69,13 @@ func runPrg(memory []int, noun, verb int) error {
 		}
 	}
 	return nil
+}
+
+func toInt(value string) int {
+	parsedValue, err := strconv.Atoi(value)
+	check(err)
+
+	return parsedValue
 }
 
 func check(err error) {
