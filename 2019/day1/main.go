@@ -18,8 +18,10 @@ func main() {
 
 	sum := 0
 	for scanner.Scan() {
-		mass, _ := strconv.Atoi(scanner.Text())
-		sum += fuelRec(mass, 0)
+		mass := toInt(scanner.Text())
+
+		//partyOne(mass, &sum)
+		partyTwo(mass, &sum)
 	}
 
 	check(scanner.Err())
@@ -27,13 +29,28 @@ func main() {
 	fmt.Printf("Fuel requirements: %d\n", sum)
 }
 
-func fuelRec(value, sum int) int {
+func partyOne(mass int, sum *int) {
+	*sum += mass/3 - 2
+}
+
+func partyTwo(mass int, sum *int) {
+	*sum += partyTwoRec(mass, 0)
+}
+
+func partyTwoRec(value, sum int) int {
 	fuel := value/3 - 2
 	if fuel <= 0 {
 		return sum
 	}
 
-	return fuelRec(fuel, sum+fuel)
+	return partyTwoRec(fuel, sum+fuel)
+}
+
+func toInt(value string) int {
+	parsedValue, err := strconv.Atoi(value)
+	check(err)
+
+	return parsedValue
 }
 
 func check(err error) {
