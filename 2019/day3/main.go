@@ -16,7 +16,7 @@ func main() {
 	defer file.Close()
 
 	isFirstWire := true
-	steps := make(map[step]int, 0)
+	steps := make(map[step]int)
 	scanner := bufio.NewScanner(file)
 	minDistance := int(^uint(0) >> 1)
 
