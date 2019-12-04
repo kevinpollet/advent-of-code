@@ -26,7 +26,7 @@ func main() {
 
 	check(scanner.Err())
 
-	fmt.Printf("Fuel requirements: %d\n", sum)
+	fmt.Println("Fuel requirements:", sum)
 }
 
 func partOne(mass int, sum *int) {

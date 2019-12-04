@@ -64,7 +64,7 @@ func main() {
 
 	check(scanner.Err())
 
-	fmt.Printf("Distance: %d\n", minDistance)
+	fmt.Println("Distance:", minDistance)
 }
 
 type step struct{ x, y int }

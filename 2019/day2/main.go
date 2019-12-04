@@ -34,7 +34,7 @@ func partOne(memory []int) {
 	err := runIntcodePrg(memory, 12, 2)
 	check(err)
 
-	fmt.Printf("Result: %d", memory[0])
+	fmt.Println("Result:", memory[0])
 }
 
 func partTwo(initialMemory []int) {
@@ -44,7 +44,7 @@ func partTwo(initialMemory []int) {
 			memory := append([]int{}, initialMemory...) // reset memory
 			runIntcodePrg(memory, noun, verb)
 			if memory[0] == 19690720 {
-				fmt.Printf("Result noun: %d, verb: %d\n", memory[1], memory[2])
+				fmt.Printf("Result noun:", memory[1], ", verb:", memory[2])
 				return
 			}
 		}

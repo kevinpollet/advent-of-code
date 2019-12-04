@@ -15,7 +15,7 @@ func main() {
 		}
 	}
 
-	fmt.Printf("Result: %d\n", passwordCount)
+	fmt.Println("Result:", passwordCount)
 }
 
 func matchPartOne(value int) bool {
