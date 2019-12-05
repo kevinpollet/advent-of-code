@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"strconv"
@@ -10,17 +11,10 @@ import (
 )
 
 func main() {
-	file, err := os.Open("./input.txt")
+	data, err := ioutil.ReadFile("./input.txt")
 	check(err)
 
-	defer file.Close()
-
-	reader := bufio.NewReader(file)
-	bytes, _, err := reader.ReadLine()
-	check(err)
-
-	opCodes := strings.Split(string(bytes), ",")
-
+	opCodes := strings.Split(string(data[:len(data)-1]), ",")
 	memory := make([]int, len(opCodes))
 	for i, opCode := range opCodes {
 		memory[i] = atoi(opCode)
@@ -30,104 +24,85 @@ func main() {
 }
 
 func runIntcodePrg(memory []int) error {
-	for cursor := 0; memory[cursor] != 99; {
-		instruction := memory[cursor]
+	cursor := 0
+	reader := bufio.NewScanner(os.Stdin)
+	opArity := map[int]int{1: 3, 2: 3, 3: 1, 4: 1, 5: 2, 6: 2, 7: 3, 8: 3}
 
+	for memory[cursor] != 99 {
+		instruction := memory[cursor]
 		opCode := instruction % 100
+
 		if opCode < 1 || opCode > 8 {
 			return fmt.Errorf("Unknown opcode: %d", opCode)
 		}
 
+		locs := readLocs(opArity[opCode], instruction, memory, cursor)
+
 		switch opCode {
-		case 1: // add
-			p1, p2 := readParam(1, instruction, memory, cursor), readParam(2, instruction, memory, cursor)
+		// add
+		case 1:
+			memory[locs[2]] = memory[locs[0]] + memory[locs[1]]
 
-			writeParamValue(3, p1+p2, instruction, memory, cursor)
+		// multiply
+		case 2:
+			memory[locs[2]] = memory[locs[0]] * memory[locs[1]]
 
-			cursor += 4
-
-		case 2: // multiply
-			p1, p2 := readParam(1, instruction, memory, cursor), readParam(2, instruction, memory, cursor)
-
-			writeParamValue(3, p1*p2, instruction, memory, cursor)
-
-			cursor += 4
-
-		case 3: // read
-			reader := bufio.NewScanner(os.Stdin)
+		// read
+		case 3:
 			fmt.Print("Input: ")
-
 			reader.Scan()
-			value := atoi(reader.Text())
+			memory[locs[0]] = atoi(reader.Text())
 
-			writeParamValue(1, value, instruction, memory, cursor)
+		//output
+		case 4:
+			fmt.Println("Output:", memory[locs[0]])
 
-			cursor += 2
-
-		case 4: //output
-			p1 := readParam(1, instruction, memory, cursor)
-			fmt.Println("Output:", p1)
-
-			cursor += 2
-
-		case 5: //jump-if-true
-			p1 := readParam(1, instruction, memory, cursor)
-			if p1 != 0 {
-				cursor = readParam(2, instruction, memory, cursor)
-			} else {
-				cursor += 3
+		//jump-if-true
+		case 5:
+			if memory[locs[0]] != 0 {
+				cursor = memory[locs[1]]
+				continue
 			}
 
-		case 6: //jump-if-false
-			p1 := readParam(1, instruction, memory, cursor)
-			if p1 == 0 {
-				cursor = readParam(2, instruction, memory, cursor)
-			} else {
-				cursor += 3
+		//jump-if-false
+		case 6:
+			if memory[locs[0]] == 0 {
+				cursor = memory[locs[1]]
+				continue
 			}
 
-		case 7: //less-than
-			p1, p2 := readParam(1, instruction, memory, cursor), readParam(2, instruction, memory, cursor)
+		//less-than
+		case 7:
+			memory[locs[0]] = btoi(memory[locs[0]] < memory[locs[1]])
 
-			writeParamValue(1, btoi(p1 < p2), instruction, memory, cursor)
-
-			cursor += 4
-
-		case 8: //equals
-			p1, p2 := readParam(1, instruction, memory, cursor), readParam(2, instruction, memory, cursor)
-
-			writeParamValue(1, btoi(p1 == p2), instruction, memory, cursor)
-
-			cursor += 4
+		//equals
+		case 8:
+			memory[locs[0]] = btoi(memory[locs[0]] == memory[locs[1]])
 		}
 
+		cursor += opArity[opCode] + 1
 	}
 	return nil
 }
 
-func readParam(index int, instruction int, memory []int, cursor int) int {
-	mode := mode(index, instruction)
-	if mode == 1 {
-		return memory[cursor+index]
-	}
-	return memory[memory[cursor+index]]
-}
-
-func writeParamValue(paramIndex int, value int, instruction int, memory []int, cursor int) {
-	mode := mode(paramIndex, instruction)
-	if mode == 1 {
-		memory[cursor+paramIndex] = value
-	}
-	memory[memory[cursor+paramIndex]] = value
-}
-
-func mode(paramIndex int, instruction int) int {
+func readLocs(arity int, instruction int, memory []int, cursor int) []int {
+	var locs []int
 	str := strconv.Itoa(instruction)
 
-	if len(str) >= paramIndex+2 {
-		return int(str[len(str)-2-paramIndex] - 48)
+	for i := 1; i <= arity; i++ {
+		mode := 0
+		if len(str) >= i+2 {
+			mode = int(str[len(str)-2-i] - 48)
+		}
+
+		if mode == 1 {
+			locs = append(locs, cursor+i)
+		} else {
+			locs = append(locs, memory[cursor+i])
+		}
 	}
-	return 0
+
+	return locs
 }
 
 func atoi(value string) int {
