@@ -58,7 +58,7 @@ func runIntcodePrg(memory []int, noun, verb int) error {
 	for cursor := 0; memory[cursor] != 99; cursor += 4 {
 		opCode := memory[cursor]
 		if opCode != 1 && opCode != 2 {
-			return fmt.Errorf("Unknown opcode: %d", cursor)
+			return fmt.Errorf("Unknown opcode: %d", opCode)
 		}
 
 		lIdx, rIdx, oIdx := memory[cursor+1], memory[cursor+2], memory[cursor+3]
