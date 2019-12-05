@@ -26,7 +26,7 @@ func main() {
 		line := scanner.Text()
 
 		for _, token := range strings.Split(line, ",") {
-			direction, count := token[:1], toInt(token[1:])
+			direction, count := token[:1], atoi(token[1:])
 
 			for i := 0; i < count; i++ {
 				switch direction {
@@ -89,7 +89,7 @@ func partTwo(steps map[step]int, secondWireStep step, secondWireStepCount int, m
 	}
 }
 
-func toInt(value string) int {
+func atoi(value string) int {
 	parsedValue, err := strconv.Atoi(value)
 	check(err)
 

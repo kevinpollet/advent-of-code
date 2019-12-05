@@ -18,7 +18,7 @@ func main() {
 
 	sum := 0
 	for scanner.Scan() {
-		mass := toInt(scanner.Text())
+		mass := atoi(scanner.Text())
 
 		//partOne(mass, &sum)
 		partTwo(mass, &sum)
@@ -46,7 +46,7 @@ func partTwoRec(value, sum int) int {
 	return partTwoRec(fuel, sum+fuel)
 }
 
-func toInt(value string) int {
+func atoi(value string) int {
 	parsedValue, err := strconv.Atoi(value)
 	check(err)
 

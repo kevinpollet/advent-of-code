@@ -24,11 +24,10 @@ func main() {
 }
 
 func runIntcodePrg(memory []int) error {
-	cursor := 0
 	reader := bufio.NewScanner(os.Stdin)
 	opArity := map[int]int{1: 3, 2: 3, 3: 1, 4: 1, 5: 2, 6: 2, 7: 3, 8: 3}
 
-	for memory[cursor] != 99 {
+	for cursor := 0; memory[cursor] != 99; {
 		instruction := memory[cursor]
 		opCode := instruction % 100
 
