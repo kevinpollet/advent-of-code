@@ -1,8 +1,9 @@
 package main
 
-import "strconv"
-
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 func main() {
 	passwordCount := 0
