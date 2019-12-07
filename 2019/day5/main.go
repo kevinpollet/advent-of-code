@@ -72,11 +72,11 @@ func runIntcodePrg(memory []int) error {
 
 		//less-than
 		case 7:
-			memory[locs[0]] = btoi(memory[locs[0]] < memory[locs[1]])
+			memory[locs[2]] = btoi(memory[locs[0]] < memory[locs[1]])
 
 		//equals
 		case 8:
-			memory[locs[0]] = btoi(memory[locs[0]] == memory[locs[1]])
+			memory[locs[2]] = btoi(memory[locs[0]] == memory[locs[1]])
 		}
 
 		cursor += opArity[opCode] + 1
@@ -86,14 +86,11 @@ func runIntcodePrg(memory []int) error {
 
 func readLocs(arity int, instruction int, memory []int, cursor int) []int {
 	var locs []int
-	str := strconv.Itoa(instruction)
+
+	str := fmt.Sprintf("%05d", instruction)
 
 	for i := 1; i <= arity; i++ {
-		mode := 0
-		if len(str) >= i+2 {
-			mode = int(str[len(str)-2-i] - 48)
-		}
-
+		mode := int(str[len(str)-2-i] - 48)
 		if mode == 1 {
 			locs = append(locs, cursor+i)
 		} else {
@@ -105,10 +102,10 @@ func readLocs(arity int, instruction int, memory []int, cursor int) []int {
 }
 
 func atoi(value string) int {
-	parsedValue, err := strconv.Atoi(value)
+	intValue, err := strconv.Atoi(value)
 	check(err)
 
-	return parsedValue
+	return intValue
 }
 
 func btoi(value bool) int {
