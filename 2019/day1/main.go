@@ -18,10 +18,11 @@ func main() {
 
 	sum := 0
 	for scanner.Scan() {
-		mass := atoi(scanner.Text())
+		mass, err := strconv.Atoi(scanner.Text())
+		check(err)
 
-		//partOne(mass, &sum)
-		partTwo(mass, &sum)
+		//sum = partOne(mass, sum)
+		sum = partTwo(mass, sum)
 	}
 
 	check(scanner.Err())
@@ -29,12 +30,12 @@ func main() {
 	fmt.Println("Fuel requirements:", sum)
 }
 
-func partOne(mass int, sum *int) {
-	*sum += mass/3 - 2
+func partOne(mass int, sum int) int {
+	return sum + mass/3 - 2
 }
 
-func partTwo(mass int, sum *int) {
-	*sum += partTwoRec(mass, 0)
+func partTwo(mass int, sum int) int {
+	return sum + partTwoRec(mass, 0)
 }
 
 func partTwoRec(value, sum int) int {
@@ -44,13 +45,6 @@ func partTwoRec(value, sum int) int {
 	}
 
 	return partTwoRec(fuel, sum+fuel)
-}
-
-func atoi(value string) int {
-	parsedValue, err := strconv.Atoi(value)
-	check(err)
-
-	return parsedValue
 }
 
 func check(err error) {

@@ -20,10 +20,10 @@ func main() {
 		memory[i] = atoi(opCode)
 	}
 
-	runIntcodePrg(memory)
+	runPrg(memory)
 }
 
-func runIntcodePrg(memory []int) error {
+func runPrg(memory []int) error {
 	reader := bufio.NewScanner(os.Stdin)
 	opArity := map[int]int{1: 3, 2: 3, 3: 1, 4: 1, 5: 2, 6: 2, 7: 3, 8: 3}
 

@@ -1,55 +1,74 @@
 package main
 
 import (
+	"bufio"
+	"errors"
 	"fmt"
-	"io/ioutil"
 	"log"
+	"os"
 	"strconv"
 	"strings"
 )
 
 func main() {
-	data, err := ioutil.ReadFile("./input.txt")
+	file, err := os.Open("./input.txt")
 	check(err)
 
-	opCodes := strings.Split(string(data[:len(data)-1]), ",")
-	memory := make([]int, len(opCodes))
-	for i, opCode := range opCodes {
-		memory[i] = atoi(opCode)
+	defer file.Close()
+
+	memory := []int{}
+	scanner := bufio.NewScanner(file)
+
+	for scanner.Scan() {
+		opCodes := strings.Split(scanner.Text(), ",")
+
+		for _, opCode := range opCodes {
+			digit, err := strconv.Atoi(opCode)
+			check(err)
+
+			memory = append(memory, digit)
+		}
 	}
 
-	// partOne(memory)
-	partTwo(memory)
-}
+	check(scanner.Err())
 
-func partOne(memory []int) {
-	err := runIntcodePrg(memory, 12, 2)
+	//result, err := partOne(memory, 12, 2)
+	result, err := partTwo(memory, 19690720)
 	check(err)
 
-	fmt.Println("Result:", memory[0])
+	fmt.Println("Result:", result)
+
 }
 
-func partTwo(initialMemory []int) {
+func partOne(memory []int, noun int, verb int) (int, error) {
+	if err := runPrg(memory, noun, verb); err != nil {
+		return -1, err
+	}
+
+	return memory[0], nil
+}
+
+func partTwo(memory []int, expectedOutput int) (int, error) {
 	for noun := 0; noun <= 99; noun++ {
 		for verb := 0; verb <= 99; verb++ {
-			memory := append([]int{}, initialMemory...) // reset memory
-			runIntcodePrg(memory, noun, verb)
-			if memory[0] == 19690720 {
-				fmt.Println("Result noun:", memory[1], "verb:", memory[2])
-				return
+
+			if result, err := partOne(clone(memory), noun, verb); err != nil {
+				return -1, err
+
+			} else if result == expectedOutput {
+				return 100*noun + verb, nil
 			}
 		}
 	}
+	return -1, errors.New("No solution")
 }
 
-func runIntcodePrg(memory []int, noun, verb int) error {
-	memory[1] = noun
-	memory[2] = verb
+func runPrg(memory []int, noun, verb int) error {
+	memory[1], memory[2] = noun, verb
 
 	for cursor := 0; memory[cursor] != 99; cursor += 4 {
 		opCode := memory[cursor]
-		
-		if opCode != 1 && opCode != 2 {
+		if opCode < 1 || opCode > 2 {
 			return fmt.Errorf("Unknown opcode: %d", opCode)
 		}
 
@@ -66,11 +85,8 @@ func runIntcodePrg(memory []int, noun, verb int) error {
 	return nil
 }
 
-func atoi(value string) int {
-	parsedValue, err := strconv.Atoi(value)
-	check(err)
-
-	return parsedValue
+func clone(memory []int) []int {
+	return append([]int{}, memory...)
 }
 
 func check(err error) {

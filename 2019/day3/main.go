@@ -9,6 +9,10 @@ import (
 	"strings"
 )
 
+type step struct {
+	x, y int
+}
+
 func main() {
 	file, err := os.Open("./input.txt")
 	check(err)
@@ -23,12 +27,13 @@ func main() {
 	for scanner.Scan() {
 		step := step{}
 		stepCount := 0
-		line := scanner.Text()
 
-		for _, token := range strings.Split(line, ",") {
-			direction, count := token[:1], atoi(token[1:])
+		for _, token := range strings.Split(scanner.Text(), ",") {
+			direction := token[:1]
+			nbSteps, err := strconv.Atoi(token[1:])
+			check(err)
 
-			for i := 0; i < count; i++ {
+			for i := 0; i < nbSteps; i++ {
 				switch direction {
 				case "R":
 					step.x++
@@ -45,18 +50,18 @@ func main() {
 
 				stepCount++
 
-				if isFirstWire {
-					if _, exists := steps[step]; !exists {
-						steps[step] = stepCount
+				if firstWireStepCount, exists := steps[step]; !exists && isFirstWire {
+					steps[step] = stepCount
+
+				} else if exists && !isFirstWire {
+					// distance := abs(-step.x) + abs(-step.y) // manhattan distance part One
+					distance := firstWireStepCount + stepCount // step count distance part Two
+
+					if minDistance > distance {
+						minDistance = distance
 					}
-
-				} else {
-					//partOne(steps, step, &minDistance)
-					partTwo(steps, step, stepCount, &minDistance)
 				}
-
 			}
-
 		}
 
 		isFirstWire = false
@@ -65,35 +70,6 @@ func main() {
 	check(scanner.Err())
 
 	fmt.Println("Distance:", minDistance)
-}
-
-type step struct{ x, y int }
-
-func partOne(steps map[step]int, secondWireStep step, minDistance *int) {
-	if _, exists := steps[secondWireStep]; exists {
-
-		distance := abs(-secondWireStep.x) + abs(-secondWireStep.y)
-		if *minDistance > distance {
-			*minDistance = distance
-		}
-	}
-}
-
-func partTwo(steps map[step]int, secondWireStep step, secondWireStepCount int, minDistance *int) {
-	if stepCount, exists := steps[secondWireStep]; exists {
-
-		distance := stepCount + secondWireStepCount
-		if *minDistance > distance {
-			*minDistance = distance
-		}
-	}
-}
-
-func atoi(value string) int {
-	parsedValue, err := strconv.Atoi(value)
-	check(err)
-
-	return parsedValue
 }
 
 func abs(value int) int {

@@ -44,16 +44,17 @@ func matchPartTwo(value int) bool {
 	}
 
 	hasDouble := false
-	currentDouble := "🎄"
+	currentDouble := string(number[0])
 
-	for i := 0; i < len(number); i++ {
-		if i < len(number)-1 && number[i] > number[i+1] {
+	for i := 1; i < len(number); i++ {
+		if number[i-1] > number[i] {
 			return false
 		}
 
 		if !hasDouble {
 			if currentDouble[0] == number[i] {
 				currentDouble += string(number[i])
+				hasDouble = i == len(number)-1 && len(currentDouble) == 2 // in case the password ends with a double
 
 			} else {
 				hasDouble = len(currentDouble) == 2
@@ -61,8 +62,6 @@ func matchPartTwo(value int) bool {
 			}
 		}
 	}
-
-	hasDouble = hasDouble || len(currentDouble) == 2 // in case the password ends with a double
 
 	return hasDouble
 }
