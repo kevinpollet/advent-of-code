@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"log"
 	"math"
@@ -13,6 +14,8 @@ type asteroid struct {
 	x, y     int
 	distance float64
 }
+
+type void struct{}
 
 func main() {
 	file, err := os.Open("./input.txt")
@@ -40,17 +43,17 @@ func main() {
 
 	fmt.Printf("Max asteroids detected: %d, position: (%d,%d)\n", result, asteroid.x, asteroid.y)
 
-	result = partTwo(asteroids, asteroid)
+	result, err = partTwo(asteroids, asteroid)
+	check(err)
 
 	fmt.Println("Result:", result)
 }
 
 func partOne(asteroids []asteroid) (int, asteroid) {
-	max := 0
-	asteroid := asteroid{}
+	max, position := 0, asteroid{}
 
 	for _, from := range asteroids {
-		angles := map[float64]int{}
+		angles := map[float64]void{}
 
 		for _, to := range asteroids {
 
@@ -60,24 +63,24 @@ func partOne(asteroids []asteroid) (int, asteroid) {
 				if angle < 0 {
 					angle += 2 * math.Pi
 				}
+
 				if _, exists := angles[angle]; !exists {
-					angles[angle] = 0
+					angles[angle] = void{}
 				}
 			}
 		}
 
 		if len(angles) > max {
 			max = len(angles)
-			asteroid = from
+			position = from
 		}
 	}
 
-	return max, asteroid
+	return max, position
 }
 
-func partTwo(asteroids []asteroid, from asteroid) int {
-	anglesMap := map[float64][]asteroid{}
-	angles := []float64{}
+func partTwo(asteroids []asteroid, from asteroid) (int, error) {
+	anglesMap, angles := map[float64][]asteroid{}, []float64{}
 
 	for _, asteroid := range asteroids {
 
@@ -102,17 +105,17 @@ func partTwo(asteroids []asteroid, from asteroid) int {
 	sort.Float64s(angles)
 
 	for i, angle := range angles {
-		min := min(anglesMap[angle])
-		anglesMap[angle] = remove(anglesMap[angle], min)
+		asteroid := closest(anglesMap[angle])
+		anglesMap[angle] = remove(anglesMap[angle], asteroid)
 
 		if i == 199 {
-			return min.x*100 + min.y
+			return asteroid.x*100 + asteroid.y, nil
 		}
 	}
-	return -1
+	return -1, errors.New("No result")
 }
 
-func min(asteroids []asteroid) asteroid {
+func closest(asteroids []asteroid) asteroid {
 	min := asteroids[0]
 	for i := 1; i < len(asteroids); i++ {
 		if asteroids[i].distance < min.distance {
