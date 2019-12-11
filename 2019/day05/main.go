@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"os"
@@ -17,15 +18,18 @@ func main() {
 	opCodes := strings.Split(string(data[:len(data)-1]), ",")
 	memory := make([]int, len(opCodes))
 	for i, opCode := range opCodes {
-		memory[i] = atoi(opCode)
+		memory[i], err = strconv.Atoi(opCode)
+		check(err)
 	}
 
-	runPrg(memory)
+	fmt.Print("Input: ")
+	err = runPrg(memory, bufio.NewReader(os.Stdin), os.Stdout)
+	check(err)
 }
 
-func runPrg(memory []int) error {
-	reader := bufio.NewScanner(os.Stdin)
-	opArity := map[int]int{1: 3, 2: 3, 3: 1, 4: 1, 5: 2, 6: 2, 7: 3, 8: 3}
+func runPrg(memory []int, input io.Reader, output io.Writer) error {
+	reader := bufio.NewScanner(input)
+	arity := map[int]int{1: 3, 2: 3, 3: 1, 4: 1, 5: 2, 6: 2, 7: 3, 8: 3}
 
 	for cursor := 0; memory[cursor] != 99; {
 		instruction := memory[cursor]
@@ -35,7 +39,7 @@ func runPrg(memory []int) error {
 			return fmt.Errorf("Unknown opcode: %d", opCode)
 		}
 
-		locs := readLocs(opArity[opCode], instruction, memory, cursor)
+		locs := readLocs(arity[opCode], instruction, memory, cursor)
 
 		switch opCode {
 		// add
@@ -48,13 +52,24 @@ func runPrg(memory []int) error {
 
 		// read
 		case 3:
-			fmt.Print("Input: ")
-			reader.Scan()
-			memory[locs[0]] = atoi(reader.Text())
+			for reader.Scan() {
+				input, err := strconv.Atoi(reader.Text())
+				if err != nil {
+					return err
+				}
+
+				memory[locs[0]] = input
+				break
+			}
+
+			if reader.Err() != nil {
+				return reader.Err()
+			}
 
 		//output
 		case 4:
-			fmt.Println("Output:", memory[locs[0]])
+			output.Write([]byte(strconv.Itoa(memory[locs[0]])))
+			output.Write([]byte("\n"))
 
 		//jump-if-true
 		case 5:
@@ -79,7 +94,7 @@ func runPrg(memory []int) error {
 			memory[locs[2]] = btoi(memory[locs[0]] == memory[locs[1]])
 		}
 
-		cursor += opArity[opCode] + 1
+		cursor += arity[opCode] + 1
 	}
 	return nil
 }
@@ -99,13 +114,6 @@ func readLocs(arity int, instruction int, memory []int, cursor int) []int {
 	}
 
 	return locs
-}
-
-func atoi(value string) int {
-	intValue, err := strconv.Atoi(value)
-	check(err)
-
-	return intValue
 }
 
 func btoi(value bool) int {
