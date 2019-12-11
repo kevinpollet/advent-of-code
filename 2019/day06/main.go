@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -24,11 +25,14 @@ func main() {
 
 	check(reader.Err())
 
-	//partOne(orbits)
-	partTwo(orbits)
+	//result := partOne(orbits)
+	result, err := partTwo(orbits)
+	check(err)
+
+	fmt.Println("Result:", result)
 }
 
-func partOne(orbits map[string]string) {
+func partOne(orbits map[string]string) int {
 	indirectOrbits := 0
 
 	for _, value := range orbits {
@@ -40,39 +44,29 @@ func partOne(orbits map[string]string) {
 		}
 	}
 
-	fmt.Println("Total orbits:", indirectOrbits+len(orbits))
+	return indirectOrbits + len(orbits)
 }
 
-// not optimized
-func partTwo(orbits map[string]string) {
-	youToCOM, sanToCOM := path("YOU", orbits), path("SAN", orbits)
+func partTwo(orbits map[string]string) (int, error) {
+	youToCOM, youSteps, sanSteps := map[string]int{}, 0, 0
 
-	for yIndex, yObject := range youToCOM {
+	for orbited, exists := orbits["YOU"]; exists; {
+		youToCOM[orbited] = youSteps
+		orbited, exists = orbits[orbited]
+		youSteps++
+	}
 
-		for sIndex := indexOf(sanToCOM, yObject); sIndex != -1; {
-			fmt.Println("Orbital transfers:", sIndex+yIndex-2)
-			return
+	for orbited, exists := orbits["SAN"]; exists; {
+
+		if youSteps, intersect := youToCOM[orbited]; intersect {
+			return youSteps + sanSteps, nil
 		}
-	}
-}
 
-func path(start string, orbitsMap map[string]string) []string {
-	path := []string{start}
-
-	for orbited, exists := orbitsMap[start]; exists; {
-		path = append(path, orbited)
-		orbited, exists = orbitsMap[orbited]
+		orbited, exists = orbits[orbited]
+		sanSteps++
 	}
-	return path
-}
 
-func indexOf(values []string, value string) int {
-	for index, v := range values {
-		if v == value {
-			return index
-		}
-	}
-	return -1
+	return 0, errors.New("No path from YOU to SAN")
 }
 
 func check(err error) {
