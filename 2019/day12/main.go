@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strconv"
 )
 
 type moon struct {
@@ -129,13 +128,6 @@ func clone(moons []*moon) []*moon {
 		result = append(result, &moonCopy)
 	}
 	return result
-}
-
-func atoi(value string) int {
-	intValue, err := strconv.Atoi(value)
-	check(err)
-
-	return intValue
 }
 
 func lcm(a, b int) int {

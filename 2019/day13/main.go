@@ -8,8 +8,6 @@ import (
 	"strings"
 )
 
-type pos struct{ x, y int }
-
 func main() {
 	data, err := ioutil.ReadFile("./input.txt")
 	check(err)

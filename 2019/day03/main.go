@@ -72,13 +72,6 @@ func main() {
 	fmt.Println("Distance:", minDistance)
 }
 
-func abs(value int) int {
-	if value < 0 {
-		return -value
-	}
-	return value
-}
-
 func check(err error) {
 	if err != nil {
 		log.Fatal(err)
