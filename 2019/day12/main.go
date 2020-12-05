@@ -30,7 +30,7 @@ func main() {
 
 	check(scanner.Err())
 
-	//result := partOne(clone(moons), 1000)
+	// result := partOne(clone(moons), 1000)
 	result := partTwo(clone(moons))
 
 	fmt.Println(result)

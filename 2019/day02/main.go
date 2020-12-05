@@ -32,7 +32,7 @@ func main() {
 
 	check(scanner.Err())
 
-	//result, err := partOne(memory, 12, 2)
+	// result, err := partOne(memory, 12, 2)
 	result, err := partTwo(memory, 19690720)
 	check(err)
 

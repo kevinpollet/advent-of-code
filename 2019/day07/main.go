@@ -18,8 +18,8 @@ func main() {
 		memory[i] = atoi(opCode)
 	}
 
-	//maxSignal := partOne(memory)
-	maxSignal := partTwo(memory)
+	maxSignal := partOne(memory)
+	// maxSignal := partTwo(memory)
 
 	fmt.Println("Highest signal:", maxSignal)
 }
@@ -175,29 +175,29 @@ func runPrgWithCursor(inputs []int, cursor int, memory []int) (int, int) {
 			memory[locs[0]] = inputs[inputIndex]
 			inputIndex++
 
-		//output
+		// output
 		case 4:
 			return memory[locs[0]], cursor + opArity[opCode] + 1
 
-		//jump-if-true
+		// jump-if-true
 		case 5:
 			if memory[locs[0]] != 0 {
 				cursor = memory[locs[1]]
 				continue
 			}
 
-		//jump-if-false
+		// jump-if-false
 		case 6:
 			if memory[locs[0]] == 0 {
 				cursor = memory[locs[1]]
 				continue
 			}
 
-		//less-than
+		// less-than
 		case 7:
 			memory[locs[2]] = btoi(memory[locs[0]] < memory[locs[1]])
 
-		//equals
+		// equals
 		case 8:
 			memory[locs[2]] = btoi(memory[locs[0]] == memory[locs[1]])
 		}

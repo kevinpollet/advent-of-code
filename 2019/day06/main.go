@@ -25,7 +25,7 @@ func main() {
 
 	check(reader.Err())
 
-	//result := partOne(orbits)
+	// result := partOne(orbits)
 	result, err := partTwo(orbits)
 	check(err)
 

@@ -21,7 +21,7 @@ func main() {
 		mass, err := strconv.Atoi(scanner.Text())
 		check(err)
 
-		//sum = partOne(mass, sum)
+		// sum = partOne(mass, sum)
 		sum = partTwo(mass, sum)
 	}
 

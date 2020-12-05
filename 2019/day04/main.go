@@ -10,7 +10,7 @@ func main() {
 	passwordInterval := [2]int{108457, 562041}
 
 	for i := passwordInterval[0]; i <= passwordInterval[1]; i++ {
-		//if matchPartOne(i) {
+		// if matchPartOne(i) {
 		if matchPartTwo(i) {
 			passwordCount++
 		}

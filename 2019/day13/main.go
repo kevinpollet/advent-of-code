@@ -18,7 +18,7 @@ func main() {
 		memory[i] = atoi(opCode)
 	}
 
-	//result, err := partOne(memory)
+	// result, err := partOne(memory)
 	result, err := partTwo(memory)
 	check(err)
 
@@ -121,33 +121,33 @@ func runPrg(inputs []int, cursor *int, relativeBase *int, memory []int) ([]int, 
 			memory[locs[0]] = inputs[inputIndex]
 			inputIndex++
 
-		//output
+		// output
 		case 4:
 			outputs = append(outputs, memory[locs[0]])
 
-		//jump-if-true
+		// jump-if-true
 		case 5:
 			if memory[locs[0]] != 0 {
 				*cursor = memory[locs[1]]
 				continue
 			}
 
-		//jump-if-false
+		// jump-if-false
 		case 6:
 			if memory[locs[0]] == 0 {
 				*cursor = memory[locs[1]]
 				continue
 			}
 
-		//less-than
+		// less-than
 		case 7:
 			memory[locs[2]] = btoi(memory[locs[0]] < memory[locs[1]])
 
-		//equals
+		// equals
 		case 8:
 			memory[locs[2]] = btoi(memory[locs[0]] == memory[locs[1]])
 
-		//relative base
+		// relative base
 		case 9:
 			*relativeBase += memory[locs[0]]
 		}

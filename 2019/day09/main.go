@@ -54,33 +54,33 @@ func runPrg(memory []int) error {
 			reader.Scan()
 			memory[locs[0]] = atoi(reader.Text())
 
-		//output
+		// output
 		case 4:
 			fmt.Println("Output:", memory[locs[0]])
 
-		//jump-if-true
+		// jump-if-true
 		case 5:
 			if memory[locs[0]] != 0 {
 				cursor = memory[locs[1]]
 				continue
 			}
 
-		//jump-if-false
+		// jump-if-false
 		case 6:
 			if memory[locs[0]] == 0 {
 				cursor = memory[locs[1]]
 				continue
 			}
 
-		//less-than
+		// less-than
 		case 7:
 			memory[locs[2]] = btoi(memory[locs[0]] < memory[locs[1]])
 
-		//equals
+		// equals
 		case 8:
 			memory[locs[2]] = btoi(memory[locs[0]] == memory[locs[1]])
 
-		//relative base
+		// relative base
 		case 9:
 			relativeBase += memory[locs[0]]
 		}
