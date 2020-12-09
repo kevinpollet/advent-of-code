@@ -46,7 +46,7 @@ func partOne(answersByGroup [][]string) int {
 	var result int
 
 	for _, groupAnswers := range answersByGroup {
-		uniqAnswers := make(map[rune]struct{}, 0)
+		uniqAnswers := make(map[rune]struct{})
 
 		for _, answers := range groupAnswers {
 			for _, answer := range answers {
@@ -64,7 +64,7 @@ func partTwo(answersByGroup [][]string) int {
 	var result int
 
 	for _, groupAnswers := range answersByGroup {
-		answersCount := make(map[rune]int, 0)
+		answersCount := make(map[rune]int)
 
 		for _, answers := range groupAnswers {
 			for _, answer := range answers {
