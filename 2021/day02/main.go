@@ -56,9 +56,6 @@ func partOne(cs []command) int {
 
 		case "down":
 			dp += c.value
-
-		default:
-			panic("unknown command")
 		}
 	}
 
@@ -79,9 +76,6 @@ func partTwo(cs []command) int {
 
 		case "down":
 			ap += c.value
-
-		default:
-			panic("unknown command")
 		}
 	}
 
