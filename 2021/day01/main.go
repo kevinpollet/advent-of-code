@@ -12,17 +12,13 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	defer f.Close()
 
 	s := bufio.NewScanner(f)
 
 	var d []int
 	for s.Scan() {
-		i, err := strconv.Atoi(s.Text())
-		if err != nil {
-			panic(err)
-		}
-
-		d = append(d, i)
+		d = append(d, atoi(s.Text()))
 	}
 
 	if err := s.Err(); err != nil {
@@ -30,8 +26,7 @@ func main() {
 	}
 
 	fmt.Println("Part one: ", partOne(d))
-	fmt.Println("Part one: ", partTwo(d))
-
+	fmt.Println("Part two: ", partTwo(d))
 }
 
 func partOne(d []int) int {
@@ -57,4 +52,13 @@ func partTwo(d []int) int {
 	}
 
 	return ret
+}
+
+func atoi(s string) int {
+	i, err := strconv.Atoi(s)
+	if err != nil {
+		panic(err)
+	}
+
+	return i
 }
